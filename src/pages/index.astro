@@ -1,0 +1,8 @@
+---
+import GardenExtras from '../components/GardenExtras.astro';
+import Main from '../layouts/Main.astro';
+import {url,description} from '../data/site';
+const cards=[['gallery/','相册','GALLERY','花与春天','flowers'],['notes/','手记','JOURNAL','给平凡的一天，留一点空白','coffee'],['projects/','小作品','PROJECTS','个人数字花园','fern']];
+---
+<Main><div class="wrap"><section class="hero"><div class="hero-copy"><div class="over"><i></i> HU’S LITTLE DIGITAL GARDEN</div><h1>小胡的<br/><em>美味页面</em><span class="stop">。</span></h1><p>{description}</p><div class="actions"><a class="button" href="#picks">逛逛花园 <span>↓</span></a><a class="under" href={url('about/')}>认识小胡 ↗</a></div></div><figure class="plate"><div class="plate-head"><span>BOTANICAL ARCHIVE</span><span>PL. 001</span></div><img src={url('images/fern.webp')} width="640" height="640" fetchpriority="high" alt="植物图版插画：细密的蕨叶、野草与浅色小花"/><figcaption><span><i>Fig. 01</i>　 林间蕨与野花</span><span class="seal">植物標本</span></figcaption></figure></section>
+<section class="picks" id="picks"><div class="section-title"><div class="over"><i></i> GARDEN SELECTION</div><h2>花园精选 <small>Garden picks</small></h2></div><div class="cards">{cards.map(([path,kind,en,label,pic])=><a class="card" href={url(path)}><div class={'cover '+pic}><img src={url('images/'+pic+'.webp')} alt="" loading="lazy"/>{pic==='fern'&&<span class="cover-type">Herbarium<br/><i>Garden notes</i></span>}</div><div class="card-copy"><div class="over">{kind} / {en}</div><h3>{label} <span>↗</span></h3></div></a>)}</div><p class="caption">图像为生成示意图，示例手记与灵感收集器为占位内容。</p></section></div><GardenExtras/></Main>

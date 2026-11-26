@@ -1,0 +1,19 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+import '../styles/content.css';
+import {name,url,description} from '../data/site';
+const {title=name,summary=description}=Astro.props;
+const canonical=Astro.site && new URL(Astro.url.pathname,Astro.site);
+---
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>{title===name?name:title+' · '+name}</title><meta name="description" content={summary}/><meta property="og:title" content={title}/><meta property="og:description" content={summary}/><meta property="og:type" content="website"/>{canonical&&<link rel="canonical" href={canonical}/>}<meta property="og:image" content={Astro.site?new URL(url('images/fern.webp'),Astro.site).href:url('images/fern.webp')}/><link rel="icon" href={url('favicon.svg')}/><script is:inline>try{document.documentElement.dataset.theme=localStorage.getItem('garden-theme')||'day'}catch{}</script></head><body id="top"><a class="skip" href="#main">跳至正文</a><Header/><main id="main"><slot/></main><Footer/><script>
+const menu=document.querySelector<HTMLButtonElement>('.menu')!;
+const nav=document.querySelector('nav')!;
+function close(){nav.classList.remove('open');menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','打开导航')}
+menu.onclick=()=>{if(nav.classList.contains('open'))close();else{nav.classList.add('open');menu.setAttribute('aria-expanded','true');menu.setAttribute('aria-label','关闭导航')}};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&nav.classList.contains('open')){close();menu.focus()}});
+const theme=document.querySelector<HTMLButtonElement>('.theme')!;
+function sync(){const night=document.documentElement.dataset.theme==='night';theme.textContent=night?'☼':'☾';theme.setAttribute('aria-label',night?'切换白天主题':'切换夜晚主题')}
+theme.onclick=()=>{const next=document.documentElement.dataset.theme==='night'?'day':'night';document.documentElement.dataset.theme=next;try{localStorage.setItem('garden-theme',next)}catch{}sync()};sync();
+</script></body></html>

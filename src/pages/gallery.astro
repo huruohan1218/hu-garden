@@ -1,0 +1,12 @@
+---
+import Section from '../components/Section.astro';
+import {gallery} from '../data/gallery';
+import {url} from '../data/site';
+---
+<Section title="日常相册" en="LITTLE MOMENTS"><p>把值得记住的瞬间，轻轻放在这里。</p><p class="caption">本册为 AI 生成占位图。</p><div class="filters" aria-label="照片分类">{['全部',...new Set(gallery.map(p=>p.category))].map((c,i)=><button data-category={c} aria-pressed={i===0?'true':'false'}>{c}</button>)}</div><div class="photo-grid">{gallery.map(p=><figure data-group={p.category}><a href={url('images/'+p.id+'.webp')} class="zoom" aria-label={'放大'+p.title}><img src={url('images/'+p.id+'.webp')} alt={p.alt} loading="lazy" width="512" height="512"/></a><figcaption><strong>{p.title}</strong> · {p.tags.join(' / ')}</figcaption></figure>)}</div><dialog><button autofocus aria-label="关闭大图">关闭 ×</button><img alt=""/><p></p></dialog></Section>
+<script>
+const dialog=document.querySelector('dialog')!;
+document.querySelectorAll<HTMLAnchorElement>('.zoom').forEach(link=>link.onclick=e=>{e.preventDefault();const img=dialog.querySelector('img')!;img.src=link.href;img.alt=link.querySelector('img')!.alt;dialog.querySelector('p')!.textContent=link.parentElement!.querySelector('figcaption')!.textContent;dialog.showModal()});
+dialog.onclick=e=>{if(e.target===dialog||e.target===dialog.querySelector('button')) dialog.close()};
+document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));document.querySelectorAll<HTMLElement>('[data-group]').forEach(f=>f.hidden=btn.dataset.category!=='全部'&&btn.dataset.category!==f.dataset.group)});
+</script>

@@ -1,0 +1,12 @@
+---
+import {getCollection,render} from 'astro:content';
+import Section from '../../components/Section.astro';
+import {url} from '../../data/site';
+export async function getStaticPaths(){return (await getCollection('notes')).map(entry=>({params:{id:entry.id},props:{entry}}))}
+const {entry}=Astro.props;
+const {Content}=await render(entry);
+---
+<Section title={entry.data.title} en="GARDEN JOURNAL"><progress id="reading" aria-label="阅读进度" max="1" value="0"></progress><p class="caption"><time>{entry.data.date.toISOString().slice(0,10)}</time> · {entry.data.category} {entry.data.placeholder?'· 第一版占位手记':''}</p><article class="prose"><Content/></article><a class="under" href={url('notes/')}>← 返回手记</a></Section>
+<script>
+const bar=document.querySelector('progress')!;function update(){const length=document.documentElement.scrollHeight-innerHeight;bar.value=length>0?scrollY/length:1}update();addEventListener('scroll',update,{passive:true});addEventListener('resize',update);
+</script>

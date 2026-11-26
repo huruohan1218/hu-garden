@@ -1,0 +1,5 @@
+---
+import Section from '../components/Section.astro';
+import {email} from '../data/site';
+---
+<Section title="关于小胡" en="ABOUT THE GARDENER"><div class="prose"><p>我是小胡，一个对世界保持好奇的人。</p><p>喜欢把灵感收集起来，也喜欢在普通的日子里发现一点不普通。这里会放我的照片、随手写下的文字、正在折腾的项目，还有偶尔想分享的音乐。</p><blockquote>不急着给生活下定义。希望每一次打开这个页面，都像推开一扇有风经过的窗。</blockquote><h2>来打个招呼</h2>{email?<a class="under" href={'mailto:'+email}>写一封邮件 ↗</a>:<p>公开联系邮箱尚未设置。</p>}</div></Section>

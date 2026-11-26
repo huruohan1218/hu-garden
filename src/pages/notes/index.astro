@@ -1,0 +1,13 @@
+---
+import Section from '../../components/Section.astro';
+import {getCollection} from 'astro:content';
+import {url} from '../../data/site';
+const notes=(await getCollection('notes')).sort((a,b)=>+b.data.date-+a.data.date);
+---
+<Section title="最近的手记" en="NOTES & THOUGHTS"><div class="filters"><label>搜索手记 <input type="search" id="query" placeholder="标题、正文或分类"/></label><label>分类 <select id="category"><option value="">全部</option>{Array.from(new Set(notes.map(n=>n.data.category))).map(c=><option>{c}</option>)}</select></label></div>{notes.map(n=><article class="row" data-text={[n.data.title,n.data.category,n.body].join(' ')} data-category={n.data.category}><span class="over">{n.data.date.toISOString().slice(0,10)} · {n.data.category}{n.data.placeholder?' · 占位手记':''}</span><h2><a href={url('notes/'+n.id+'/')}>{n.data.title} ↗</a></h2></article>)}<p id="empty" role="status" hidden>没有找到匹配的手记。</p></Section>
+<script>
+const query=document.querySelector<HTMLInputElement>('#query')!;
+const category=document.querySelector<HTMLSelectElement>('#category')!;
+function filter(){let count=0;document.querySelectorAll<HTMLElement>('[data-text]').forEach(n=>{n.hidden=!n.dataset.text!.toLowerCase().includes(query.value.trim().toLowerCase())||!!category.value&&category.value!==n.dataset.category;if(!n.hidden)count++});document.getElementById('empty')!.hidden=count>0}
+query.oninput=filter;category.onchange=filter;
+</script>

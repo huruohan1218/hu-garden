@@ -1,0 +1,34 @@
+---
+import {quotes} from '../data/quotes';
+import {url} from '../data/site';
+import {tracks} from '../data/tracks';
+---
+<section class="extras wrap"><div><div class="over"><i></i> DAILY NOTE</div><h2>今日小纸条</h2><p id="quote" data-quotes={JSON.stringify(quotes)}>{quotes[0]}</p><button class="soft" id="seed" aria-label="翻开纸条背面">翻到背面 ↺</button><p id="secret" role="status" hidden>✳ 你找到了一枚藏在纸背的蕨叶。</p></div><div><div class="over"><i></i> GARDEN RADIO</div><h2>音乐角落</h2><label>播放列表 <select id="tracks">{tracks.map(t=><option value={url('music/'+t.file)}>{t.title}</option>)}</select></label><audio id="player" controls preload="none" aria-label="花园音乐播放器" src={url('music/'+tracks[0].file)}></audio><div class="switches"><button class="soft" id="prev">← 上一首</button><button class="soft" id="next">下一首 →</button><label>音量 <input type="range" id="volume" min="0" max="1" step=".05" value=".5"/></label></div><p id="track-state" role="status" class="caption">原创合成试听 · 点击播放</p></div></section>
+<script>
+const quote=document.getElementById('quote')!;
+const quotes=JSON.parse(quote.dataset.quotes!);
+const date=new Date();
+const day=Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())/86400000;
+let seed=day;seed=Math.imul(seed^(seed>>>16),0x45d9f3b);quote.textContent=quotes[(seed>>>0)%quotes.length];
+const secret=document.getElementById('secret')!;
+document.getElementById('seed')!.onclick=()=>{secret.hidden=!secret.hidden};
+const audio=document.querySelector<HTMLAudioElement>('#player')!;
+const list=document.querySelector<HTMLSelectElement>('#tracks')!;
+const state=document.getElementById('track-state')!;
+const volume=document.querySelector<HTMLInputElement>('#volume')!;
+audio.volume=Number(volume.value);
+volume.oninput=()=>audio.volume=Number(volume.value);
+audio.onvolumechange=()=>volume.value=String(audio.volume);
+async function change(playing:boolean){audio.src=list.value;state.textContent=list.selectedOptions[0].text+' · 点击播放';if(playing){try{await audio.play()}catch{state.textContent='请点击播放，或检查音频文件。'}}}
+function step(delta:number,playing:boolean){list.selectedIndex=(list.selectedIndex+delta+list.length)%list.length;change(playing)}
+list.onchange=()=>change(!audio.paused);
+document.getElementById('prev')!.onclick=()=>step(-1,!audio.paused);
+document.getElementById('next')!.onclick=()=>step(1,!audio.paused);
+audio.onended=()=>step(1,true);
+audio.onplay=()=>state.textContent=list.selectedOptions[0].text+' · 正在播放';
+audio.onerror=()=>state.textContent='音频暂时无法读取。';
+audio.onpause=()=>state.textContent=list.selectedOptions[0].text+' · 已暂停';
+const plate=document.querySelector<HTMLElement>('.plate');
+if(plate&&matchMedia('(hover:hover) and (prefers-reduced-motion:no-preference)').matches){const image=plate.querySelector('img')!;plate.onpointermove=e=>{const box=plate.getBoundingClientRect();image.style.transform='translate('+((e.clientX-box.left)/box.width-.5)*5+'px,'+((e.clientY-box.top)/box.height-.5)*5+'px)'};plate.onpointerleave=()=>image.style.transform=''}
+</script>
+<style>.extras{display:grid;grid-template-columns:1fr 1fr;gap:7%;border-top:1px solid var(--line);padding:38px 0}.extras h2{font-size:30px}.extras audio{display:block;width:100%;margin:16px 0}.extras select{max-width:100%;background:var(--paper);padding:5px}.switches{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.switches input{width:75px;accent-color:var(--ink)}#quote{font:italic 22px/1.6 var(--serif)}@media(max-width:700px){.extras{grid-template-columns:1fr;gap:32px}}</style>

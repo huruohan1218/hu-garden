@@ -1,0 +1,5 @@
+---
+import {url} from '../data/site';
+const links=[['首页',''],['日常相册','gallery/'],['手记','notes/'],['小作品','projects/'],['关于我','about/']];
+---
+<header class="top"><div class="wrap bar"><a class="brand" href={url('')}><img src={url('favicon.svg')} alt="" width="35" height="35"/><strong>小胡的美味页面</strong><small>T1.2</small></a><nav aria-label="主导航">{links.map(([label,path])=><a href={url(path)} aria-current={Astro.url.pathname.replace(/\/$/,'')===url(path).replace(/\/$/,'')?'page':undefined}>{label}</a>)}</nav><div class="tools"><button class="theme" aria-label="切换夜晚主题" title="切换主题">☾</button><button class="menu" aria-expanded="false" aria-label="打开导航">☰</button></div></div></header>

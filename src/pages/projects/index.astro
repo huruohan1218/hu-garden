@@ -1,0 +1,6 @@
+---
+import Section from '../../components/Section.astro';
+import {projects} from '../../data/projects';
+import {url} from '../../data/site';
+---
+<Section title="正在做的小作品" en="THINGS I MAKE"><div class="cards">{projects.map(p=><a class="card" href={url('projects/'+p.id+'/')}><div class="cover"><img src={url('images/'+p.image+'.webp')} alt="项目示意封面"/></div><div class="card-copy"><div class="over">{p.status} · {p.placeholder?'占位项目':'本站项目'}</div><h3>{p.title} ↗</h3><p>{p.summary}</p></div></a>)}</div></Section>
